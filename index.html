@@ -5,8 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
 </head>
-<body><xmp> <h1> ajax ex dynamix search</h1>
-
+<body> <h1> ajax - live search </h1> 
+<xmp> 
+<h1>-----------app.py----------------------</h1>
 from flask import Flask, render_template, request, jsonify
 
 app = Flask(__name__)
@@ -41,14 +42,60 @@ def search():
             results.append(result)
     print(results)
     return jsonify({'results': results})
-@app.route('/submit',methods=['POST'])
-def submit():
-    username = request.form.get('username')
-    email = request.form.get('email')
-    print(username,email)
-    response_message = f"Form submitted successfully! Username: {username}, Email: {email}"
-    return jsonify({'message': response_message})
+
 if __name__ == '__main__':
     app.run(debug=True)
 
+
+<h1>-----search.html(put inside folder name templates!!)---------------</h1>
+<!DOCTYPE html>
+<head>
+<title>Live Search and Dynamic Form Submission</title>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+</head>
+<body>
+
+<h2>Live Search</h2>
+<!-- Step 2: Live Search - Create input and search results container -->
+<input type="text" id="searchInput" placeholder="Search...">
+<div id="searchResults"></div>
+
+<script>
+$(document).ready(function(){
+    // Function to display search results
+    function displayResults(results) {
+        var html = '';
+        if (results.length > 0) {
+            $.each(results, function(index, result){
+                html += '<p><strong>' + result.name + '</strong>: ' + result.details.color+' '+ result.details.taste+ '</p>';
+            });
+        } else {
+            html = '<p>No results found</p>';
+        }
+        $('#searchResults').html(html);
+    }
+
+    // Submit search form
+    $('#searchInput').on('keyup', function(){
+        var searchText = $(this).val();
+        if(searchText !== ''){
+            $.ajax({
+                url: '/search',
+                method: 'GET',
+                data: {query: searchText},
+                success: function(response){
+                    displayResults(response.results);
+                }
+            });
+        } else {
+            $('#searchResults').html('');
+        }
+    });
+
+
+});
+</script>
+
+</body>
+</html>
 </xmp></body>
