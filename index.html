@@ -5,4 +5,50 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
 </head>
-<body><xmp>hi</xmp></body>
+<body><xmp> <h1> ajax ex dynamix search</h1>
+
+from flask import Flask, render_template, request, jsonify
+
+app = Flask(__name__)
+
+# Dictionary containing details about each fruit
+fruit_details = {
+    'apple': {'color': 'red', 'taste': 'sweet'},
+    'banana': {'color': 'yellow', 'taste': 'sweet'},
+    'orange': {'color': 'orange', 'taste': 'sweet and tangy'},
+    'grape': {'color': 'green, purple', 'taste': 'sweet'},
+    'kiwi': {'color': 'brown', 'taste': 'tangy'},
+    'pineapple': {'color': 'yellow', 'taste': 'tangy and sweet'},
+    'strawberry': {'color': 'red', 'taste': 'sweet'},
+    'watermelon': {'color': 'green', 'taste': 'sweet and juicy'}
+}
+
+@app.route('/')
+def index():
+    return render_template('search.html')
+
+@app.route('/search',methods=['GET'])
+def search():
+    query = request.args.get('query')
+    print(query)
+    # Perform search logic
+    results = []
+    if query=="" or query is None:
+        return jsonify({'results':[]})
+    for fruit, details in fruit_details.items():
+        if query.lower() in fruit.lower():
+            result = {'name': fruit, 'details': details}
+            results.append(result)
+    print(results)
+    return jsonify({'results': results})
+@app.route('/submit',methods=['POST'])
+def submit():
+    username = request.form.get('username')
+    email = request.form.get('email')
+    print(username,email)
+    response_message = f"Form submitted successfully! Username: {username}, Email: {email}"
+    return jsonify({'message': response_message})
+if __name__ == '__main__':
+    app.run(debug=True)
+
+</xmp></body>
