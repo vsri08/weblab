@@ -238,4 +238,72 @@ if __name__ == '__main__':
 
 </xmp>
 
+<h1>Restful calc</h1>
+<h1>--app.py--</h1>
+<xmp>
+from flask import Flask, request, jsonify, render_template
+
+app = Flask(__name__)
+
+@app.route('/')
+def index():
+    return render_template('index1.html')
+
+@app.route('/calculate')
+def add():
+    first = float(request.args.get('first'))
+    second = float(request.args.get('second'))
+    op=str(request.args.get('operation'))
+    return jsonify({'result':eval(str(first)+op+str(second))})
+    
+if __name__ == '__main__':
+    app.run(debug=True)
+</xmp>
+
+<h1>---inside index.html(templates)----</h1>
+<xmp>
+<!DOCTYPE html>
+<head>
+    <title>Calculator Application</title>
+</head>
+<body>
+    <h1>Calculator</h1>
+    <form id="calculatorForm">
+        <input type="number" id="firstOperand" required>
+        <select id="operator">
+            <option value="+">+</option>
+            <option value="-">-</option>
+            <option value="*">*</option>
+            <option value="/">/</option>
+        </select>
+        <input type="number" id="secondOperand" required>
+        <button type="submit">Calculate</button>
+    </form>
+    <div id="result"></div>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('#calculatorForm').submit(function(event) {
+                event.preventDefault();
+                var firstOperand = $('#firstOperand').val();
+                var secondOperand = $('#secondOperand').val();
+                var operator = $('#operator').val();
+                $.ajax({
+                    url: '/calculate',
+                    method: 'GET',
+                    data: { first: firstOperand, second: secondOperand, operation: operator},
+                    success: function(response) {
+                        $('#result').html('Result: ' + response.result);
+                    },
+                    error: function(xhr, status, error) {
+                        $('#result').html('Error occurred while calculating.'+error+" "+xhr+" "+status);
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
+</xmp>
 </body>
