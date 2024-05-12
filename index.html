@@ -6,8 +6,9 @@
     <title>Document</title>
 </head>
 <body> <h1> ajax - live search </h1> 
-<xmp> 
+
 <h1>-----------app.py----------------------</h1>
+<xmp> 
 from flask import Flask, render_template, request, jsonify
 
 app = Flask(__name__)
@@ -45,9 +46,11 @@ def search():
 
 if __name__ == '__main__':
     app.run(debug=True)
+</xmp> 
 
+<h1>-----search.html for live search(put inside folder name templates!!)---------------</h1>
 
-<h1>-----search.html(put inside folder name templates!!)---------------</h1>
+<xmp> 
 <!DOCTYPE html>
 <head>
 <title>Live Search and Dynamic Form Submission</title>
@@ -98,4 +101,81 @@ $(document).ready(function(){
 
 </body>
 </html>
-</xmp></body>
+</xmp>
+
+<h1> ajax - dynamic form</h1>
+<h1>----app.py--------</h1>
+<xmp>
+from flask import Flask, render_template, request, jsonify
+
+app = Flask(__name__)
+
+@app.route('/')
+def index():
+    return render_template('search.html')
+
+@app.route('/submit',methods=['POST'])
+def submit():
+    username = request.form.get('username')
+    email = request.form.get('email')
+    print(username,email)
+    response_message = f"Form submitted successfully! Username: {username}, Email: {email}"
+    return jsonify({'message': response_message})
+if __name__ == '__main__':
+    app.run(debug=True)
+</xmp>
+
+<h1>-------search.html for dynamic form (save in folder name templates!!)-------</h1>
+
+<xmp>
+<!DOCTYPE html>
+<head>
+<title>Live Search and Dynamic Form Submission</title>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+</head>
+<body>
+
+
+
+<h2>Dynamic Form Submission</h2>
+<!-- Step 4: Dynamic Form Submission - Create form -->
+<form id="myForm">
+    <input type="text" name="username" placeholder="Username">
+    <input type="email" name="email" placeholder="Email">
+    <button type="submit">Submit</button>
+</form>
+
+<div id="submitResponse"></div>
+
+<script>
+
+    // Step 5: Intercept the form submission using AJAX to prevent the default behavior, then submit the form data asynchronously
+    $('#myForm').submit(function(event) {
+        event.preventDefault(); // Prevent default form submission
+        var formData = $(this).serialize();
+        $.ajax({
+            url: '/submit', // URL to your server-side script handling form submission
+            method: 'POST',
+            data: formData,
+            success: function(response) {
+                // Handle success response
+                console.log(response);
+                $('#submitResponse').html(response.message); // Display the response
+            },
+            error: function(xhr, status, error) {
+                // Handle error response
+                console.error(error);
+            }
+        });
+    });
+
+</script>
+
+</body>
+</html>
+</xmp>
+
+
+
+
+</body>
